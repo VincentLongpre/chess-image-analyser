@@ -27,7 +27,22 @@ LOG_FILE = os.environ.get("FLASK_LOG", "flask.log")
 
 app = Flask(__name__)
 
-def load_model(workspace, model_name, version):
+
+def load_model(workspace: str, model_name: str, version: str):
+    """
+    Accesses the model state dictionary stored on comet_ml under the given workspace, model_name and version
+    and returns a ResNet model loaded with the state.
+
+    See more here:
+
+            https://www.comet.ml/docs/python-sdk/API/#apidownload_registry_model
+
+    Args:
+        workspace (str): The Comet ML workspace
+        model (str): The model in the Comet ML registry to download
+        version (str): The model version to download
+    """
+
     if not os.path.exists(f"models/{workspace}/{model_name}/{version}/"):
         os.makedirs(f"models/{workspace}/{model_name}/", exist_ok=True)
     api = API(os.environ["COMET_API_KEY"])
@@ -142,5 +157,6 @@ def internal_server_error(e):
 
 
 with app.app_context():
+    # Load default model on app startup and basic configuration for logging system
     logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
     app.model = load_model("vincentlongpre", "basic-resnet18", "1.0.0",)

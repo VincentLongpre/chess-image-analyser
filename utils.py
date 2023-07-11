@@ -3,7 +3,15 @@ import torch
 
 pieces_conv_list = ['p','n','b','r','q','k','P','N','B','R','Q','K']
 
-def fen_to_labels(fen):
+def fen_to_labels(fen: str):
+    """ 
+    Convert FEN notation to a tensor containing an integer label representing
+    the piece (or absence of piece) on each square of the board.
+
+    Args:
+        fen (str): FEN notation of the position
+    """
+
     labels = torch.empty(8,8)
     rows = fen.split('-')
     i, j = 0, 0
@@ -21,7 +29,14 @@ def fen_to_labels(fen):
         i += 1
     return labels
 
-def labels_to_fen(labels):
+def labels_to_fen(labels: torch.Tensor):
+    """ 
+    Convert a tensor of labels to the FEN notation of the position.
+
+    Args:
+        labels (tensor): Tensor containing an integer representing the piece on each square
+    """
+
     fen = ''
     for i in range(8):
         row = ''
@@ -42,21 +57,38 @@ def labels_to_fen(labels):
     return fen[:-1]
 
 def cross_entropy_loss(logits: torch.Tensor, labels: torch.Tensor):
-    """ Return the mean loss for this batch
-    :param logits: [batch_size, num_class]
-    :param labels: [batch_size]
-    :return loss 
+    """ 
+    Return the mean loss for this batch
+
+    Args:
+        logits (tensor): [batch_size, num_class]
+        labels (tensor): [batch_size] 
     """
+
     labels = torch.nn.functional.one_hot(labels,num_classes=logits.shape[1])
     preds = torch.nn.functional.log_softmax(logits,dim=1)
     return -(preds * labels).sum(dim=1).mean()
 
 def compute_accuracy(logits: torch.Tensor, labels: torch.Tensor):
-    """ Compute the accuracy of the batch """
+    """ 
+    Compute the accuracy of the batch 
+
+    Args:
+        logits (tensor): [batch_size, num_class]
+        labels (tensor): [batch_size] 
+    """
+
     acc = (logits.argmax(dim=1) == labels).float().mean()
     return acc
 
-def to_device(tensors, device):
+def to_device(tensors, device: str):
+    """
+    Transfer a tensor, list of tensor or tensor dictionary to the selected device.
+
+    Args:
+        tensors (tensor, tensor list or tensor dict): Tensor object to send to device
+        device (str): Device name
+    """
     if isinstance(tensors, torch.Tensor):
         return tensors.to(device=device)
     elif isinstance(tensors, dict):
@@ -69,7 +101,7 @@ def to_device(tensors, device):
     else:
         raise NotImplementedError("Unknown type {0}".format(type(tensors)))
         
-def seed_experiment(seed):
+def seed_experiment(seed: int):
     """Seed the pseudorandom number generator, for repeatability.
 
     Args:

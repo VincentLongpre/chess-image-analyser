@@ -14,6 +14,8 @@ Secondly, the dataset used to train the model can be found and easily downloaded
 
 Once the data is downloaded, the model is trained using the procedure in [training.ipynb](training.ipynb). The model obtained is stored in the models folder and can then be saved to comet_ml. Script for comet_ml model saving can be found in [prediction.py](prediction.py)
 
+Next, the assets used to generate images of the predicted position must be downloaded and saved in the directory (the path to the PNGs 1x with shadow images must be specified in the [chess_board.py](chess_board.py) file). The required assets are free to available on this [link](https://opengameart.org/content/chess-pieces-and-board-squares). 
+
 Finally, we are ready to run the flask application that will serve the streamlit web application. To do so, run the following command:
 ```sh
 $ gunicorn --bind 0.0.0.0:8080 app:app

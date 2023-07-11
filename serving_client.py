@@ -20,7 +20,7 @@ class ServingClient:
         dataframe that corresponds index-wise to the input dataframe.
         
         Args:
-            X (Dataframe): Input dataframe to submit to the prediction service.
+            file_bytes (bytestring): Input image bytestring to submit to the prediction service.
         """
 
         data = {}
@@ -80,18 +80,12 @@ if __name__ == "__main__":
     print(first_preds)
 
     # Loading a different model
-    # print(client.download_registry_model("ift-6758", "logistic-regression-on-distance-and-angle", "1.0.0"))
-    # client.features = ["distanceGoal", "angle"]
+    print(client.download_registry_model("vincentlongpre", "augmented-resnet18", "1.0.0"))
 
-    # df = pd.DataFrame([{
-    #     "distance": 0.01,
-    #     "angle": 45,
-    # }])
-
-    # # Testing predictions
-    # third_preds = client.predict(df)
-    # assert first_preds != third_preds, "Predictions did not change with model change"
-    # print(third_preds)
+    # Testing predictions
+    third_preds = client.predict(image_bytes)
+    assert first_preds != third_preds, "Predictions did not change with model change"
+    print(third_preds)
 
     # Testing logs (with data)
-    #print(client.logs())
+    print(client.logs())
