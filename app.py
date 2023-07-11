@@ -51,7 +51,7 @@ def load_model(workspace: str, model_name: str, version: str):
         model_name,
         version,
         output_path=f"models/{workspace}/{model_name}/{version}",
-        expand=True
+        expand=True,
     )
     app.logger.info(f"Downloaded model {workspace}/{model_name}/{version}")
 
@@ -60,7 +60,7 @@ def load_model(workspace: str, model_name: str, version: str):
 
     with open(os.path.join(path, file), "rb") as f:
         model_obj = ResNet18(num_classes=13)
-        model_obj.load_state_dict(torch.load(f ,map_location='cpu'))
+        model_obj.load_state_dict(torch.load(f, map_location="cpu"))
         app.logger.info(f"Loaded model {workspace}/{model_name}/{version}")
 
     return model_obj
@@ -71,9 +71,7 @@ def logs():
     """Reads data from the log file and returns them as the response"""
 
     with open(LOG_FILE) as f:
-        response = {
-            "logs": f.read()
-        }
+        response = {"logs": f.read()}
 
     return jsonify(response)
 
@@ -124,8 +122,12 @@ def predict():
     """
 
     if app.model is None:
-        app.logger.error("Error, no model loaded. Please use /download_registry_model first")
-        return {"predictions": "Error, no model loaded. Please use /download_registry_model first"}
+        app.logger.error(
+            "Error, no model loaded. Please use /download_registry_model first"
+        )
+        return {
+            "predictions": "Error, no model loaded. Please use /download_registry_model first"
+        }
 
     # Get POST json data
     image_json = json.loads(request.get_json())
@@ -133,19 +135,17 @@ def predict():
     image_data = base64.b64decode(image_json.get("img"))
     image = Image.open(io.BytesIO(image_data))
 
-    image = image.resize((400,400), Image.Resampling.LANCZOS)
+    image = image.resize((400, 400), Image.Resampling.LANCZOS)
     convert_tensor = transforms.ToTensor()
-    features = convert_tensor(image)[:3,:,:]
+    features = convert_tensor(image)[:3, :, :]
 
     split_features = split_example(features)
 
     logits = app.model(split_features)
     preds = logits.argmax(dim=1)
-    fen_pred = labels_to_fen(preds.reshape(8,8))
+    fen_pred = labels_to_fen(preds.reshape(8, 8))
 
-    response = {
-        "predictions": fen_pred
-    }
+    response = {"predictions": fen_pred}
 
     app.logger.info(response)
     return jsonify(response)  # response must be json serializable!
@@ -159,4 +159,8 @@ def internal_server_error(e):
 with app.app_context():
     # Load default model on app startup and basic configuration for logging system
     logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
-    app.model = load_model("vincentlongpre", "basic-resnet18", "1.0.0",)
+    app.model = load_model(
+        "vincentlongpre",
+        "basic-resnet18",
+        "1.0.0",
+    )

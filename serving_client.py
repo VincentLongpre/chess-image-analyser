@@ -18,13 +18,13 @@ class ServingClient:
         Formats the inputs into an appropriate payload for a POST request, and queries the
         prediction service. Retrieves the response from the server, and processes it back into a
         dataframe that corresponds index-wise to the input dataframe.
-        
+
         Args:
             file_bytes (bytestring): Input image bytestring to submit to the prediction service.
         """
 
         data = {}
-        data['img'] = base64.encodebytes(file_bytes).decode('utf-8')
+        data["img"] = base64.encodebytes(file_bytes).decode("utf-8")
 
         return requests.post(f"{self.base_url}/predict", json=json.dumps(data)).json()
 
@@ -37,12 +37,12 @@ class ServingClient:
         """
         Triggers a "model swap" in the service; the workspace, model, and model version are
         specified and the service looks for this model in the model registry and tries to
-        download it. 
+        download it.
 
         See more here:
 
             https://www.comet.ml/docs/python-sdk/API/#apidownload_registry_model
-        
+
         Args:
             workspace (str): The Comet ML workspace
             model (str): The model in the Comet ML registry to download
@@ -55,8 +55,9 @@ class ServingClient:
                 "workspace": workspace,
                 "model": model,
                 "version": version,
-            }
+            },
         ).json()
+
 
 if __name__ == "__main__":
     # Tests, make sure the client is running on 127.0.0.1:8080 (your local machine)
@@ -64,14 +65,14 @@ if __name__ == "__main__":
     client = ServingClient(ip="0.0.0.0", port="8080")
 
     # Testing logs
-    #print(client.logs())
+    # print(client.logs())
 
     # test data
-    test_data_path = 'dataset/ood'
-    file_name = '2b5-p2NBp1p-1bp1nPPr-3P4-2pRnr1P-1k1B1Ppp-1P1P1pQP-Rq1N3K.jpeg'
+    test_data_path = "dataset/ood"
+    file_name = "2b5-p2NBp1p-1bp1nPPr-3P4-2pRnr1P-1k1B1Ppp-1P1P1pQP-Rq1N3K.jpeg"
 
-    with open(os.path.join(test_data_path, file_name), mode='rb') as file:
-            image_bytes = file.read()
+    with open(os.path.join(test_data_path, file_name), mode="rb") as file:
+        image_bytes = file.read()
 
     # Testing predictions
     first_preds = client.predict(image_bytes)
@@ -80,7 +81,9 @@ if __name__ == "__main__":
     print(first_preds)
 
     # Loading a different model
-    print(client.download_registry_model("vincentlongpre", "augmented-resnet18", "1.0.0"))
+    print(
+        client.download_registry_model("vincentlongpre", "augmented-resnet18", "1.0.0")
+    )
 
     # Testing predictions
     third_preds = client.predict(image_bytes)
