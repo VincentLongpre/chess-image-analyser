@@ -127,6 +127,10 @@ with st.container():
         with col2:
             to_play = st.selectbox("Color to play", ("white", "black"))
 
+        if color == "black":
+            pred_fen = "-".join(pred_fen.split("-")[::-1])
+
+
         # Lichess redirection url construction
         option_ext = f"_{to_play[0]}_-_-_0_1?color={color}"
         fen_ext = "/".join(pred_fen.split("-"))
