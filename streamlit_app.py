@@ -130,7 +130,6 @@ with st.container():
         if color == "black":
             pred_fen = "-".join(pred_fen.split("-")[::-1])
 
-
         # Lichess redirection url construction
         option_ext = f"_{to_play[0]}_-_-_0_1?color={color}"
         fen_ext = "/".join(pred_fen.split("-"))
