@@ -128,7 +128,7 @@ with st.container():
             to_play = st.selectbox("Color to play", ("white", "black"))
 
         if color == "black":
-            pred_fen = "-".join(pred_fen.split("-")[::-1])
+            pred_fen = pred_fen[::-1]
 
         # Lichess redirection url construction
         option_ext = f"_{to_play[0]}_-_-_0_1?color={color}"
